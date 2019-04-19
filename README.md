@@ -4,7 +4,7 @@ This repository contains a list of of HTTP user-agents used by robots, crawlers,
 
 ## Install
 
-### Direct download 
+### Direct download
 
 Download the [`crawler-user-agents.json` file](https://raw.githubusercontent.com/monperrus/crawler-user-agents/master/crawler-user-agents.json) from this repository directly.
 
@@ -12,9 +12,9 @@ Download the [`crawler-user-agents.json` file](https://raw.githubusercontent.com
 Install using npm or Yarn, or d
 
 ```sh
-npm install --save "https://github.com/monperrus/crawler-user-agents.git"
+npm install --save crawler-user-agents
 # OR
-yarn add "https://github.com/monperrus/crawler-user-agents.git"
+yarn add crawler-user-agents
 ```
 
 In Node.js, you can `require` the package to get an array of crawler user agents.
@@ -30,7 +30,7 @@ Each `pattern` is a regular expression. It should work out-of-the-box wih your f
 
 * JavaScript: `if (RegExp(entry.pattern).test(req.headers['user-agent']) { ... }`
 * PHP: add a slash before and after the pattern: `ìf (preg_match('/'.$entry['pattern'].'/', $_SERVER['HTTP_USER_AGENT'])): ...`
-* Python: `if .search(entry['pattern'], ua): ...`
+* Python: `if re.search(entry['pattern'], ua): ...`
 
 ## Contributing
 
@@ -58,7 +58,15 @@ The list is under a [MIT License](https://opensource.org/licenses/MIT). The vers
 
 ## Related work
 
-If you are using Ruby, [Voight-Kampff](https://github.com/biola/Voight-Kampff) and [isbot](https://github.com/Hentioe/isbot) provide  libraries for accessing this data.
+There are a few wrapper libraries that use this data to detect bots:
 
-Other systems for spotting robots, crawlers, and spiders that you may want to consider include [isBot](https://github.com/gorangajic/isbot) (Node.JS), [Crawler-Detect](https://github.com/JayBizzle/Crawler-Detect) (PHP), [BrowserDetector](https://github.com/mimmi20/BrowserDetector) (PHP), and [browscap](https://github.com/browscap/browscap) (JSON files).
+ * [Voight-Kampff](https://github.com/biola/Voight-Kampff) (Ruby)
+ * [isbot](https://github.com/Hentioe/isbot) (Ruby)
+ * [crawlers](https://github.com/Olical/crawlers) (Clojure)
 
+Other systems for spotting robots, crawlers, and spiders that you may want to consider are:
+
+ * [isBot](https://github.com/gorangajic/isbot) (Node.JS)
+ * [Crawler-Detect](https://github.com/JayBizzle/Crawler-Detect) (PHP)
+ * [BrowserDetector](https://github.com/mimmi20/BrowserDetector) (PHP)
+ * [browscap](https://github.com/browscap/browscap) (JSON files)

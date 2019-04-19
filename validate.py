@@ -15,12 +15,14 @@ JSON_SCHEMA = {
     "items": {
         "type": "object",
         "properties": {
-            "pattern": {"type": "string"},
-            "instances": {"type": "array"},
-            "url": {"type": "string"},
-            "addition_date": {"type": "string"}
+            "pattern": {"type": "string"}, # required
+            "instances": {"type": "array"}, # required
+            "url": {"type": "string"}, # optional
+            "description": {"type": "string"}, # optional
+            "addition_date": {"type": "string"}, # optional
+            "depends_on": {"type": "array"} # allows an instance to match twice
         },
-        "required": ["pattern"]
+        "required": ["pattern", "instances"]
     }
 }
 
@@ -56,16 +58,31 @@ def main():
     num_instances = 0
     for entry in json_data:
         pattern = entry['pattern']
+        
+        # canonicalize entry
+        if 'depends_on' not in entry: entry['depends_on'] = []
+            
         # check that we have only the rights properties (not handled by default in module jsonschema)
         assert set([str(x) for x in entry.keys()]).issubset(set(JSON_SCHEMA['items']['properties'].keys())), "the entry contains unknown properties"  
         instances = entry.get('instances')
         if instances:
+            # check that there is no duplicate
+            if not len(instances) == len(set(instances)):
+                raise Exception("duplicate instances in "+pattern)
             for instance in instances:
                 num_instances += 1
                 if not re.search(pattern, instance):
                     raise ValueError('Pattern {!r} misses instance {!r}'
                                      .format(pattern, instance))
-                # TODO: Check for re2 matching here
+                
+                # contract: we want to avoid that instances are matched twice
+                # exceptions are handled with the special metadata "depends_on"
+                for entry2 in json_data:
+                    pattern2 = entry2['pattern']
+                    if pattern2 == pattern: continue
+                    if re.search(pattern2, instance) and pattern2 not in entry['depends_on']: 
+                        raise ValueError(instance + 'is matched by both ' + pattern + ' and ' + pattern2)
+
 
     # Make sure we have at least one pattern
     if len(json_data) < 1:
@@ -75,7 +92,7 @@ def main():
     for entry1 in json_data:
         for entry2 in json_data:
             if entry1 != entry2 and re.search(entry1['pattern'],
-                                              entry2['pattern']):
+                                              entry2['pattern'],re.IGNORECASE):
                 raise ValueError('Pattern {!r} is a subset of {!r}'
                                  .format(entry2['pattern'], entry1['pattern']))
 
